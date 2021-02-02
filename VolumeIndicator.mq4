@@ -7,34 +7,32 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
-#property indicator_chart_window
-//+------------------------------------------------------------------+
-//| Custom indicator initialization function                         |
-//+------------------------------------------------------------------+
-int OnInit()
-  {
-//--- indicator buffers mapping
-   
-//---
-   return(INIT_SUCCEEDED);
-  }
-//+------------------------------------------------------------------+
-//| Custom indicator iteration function                              |
-//+------------------------------------------------------------------+
-int OnCalculate(const int rates_total,
-                const int prev_calculated,
-                const datetime &time[],
-                const double &open[],
-                const double &high[],
-                const double &low[],
-                const double &close[],
-                const long &tick_volume[],
-                const long &volume[],
-                const int &spread[])
+int returnCode = 0;
+void OnTick()
   {
 //---
+  double highestCandle = iHighest(_Symbol,_Period,MODE_HIGH,3);
+  double closeCandle = High[0];
+  int fourth = iVolume(NULL,0,3);
+  int thirdBar=iVolume(NULL,0,2);
+    int secondBar=iVolume(NULL,0,1);
+     int currentBar=iVolume(NULL,0,0);
+   //  if(currentBar>secondBar){
+   if((currentBar > secondBar) && (secondBar > thirdBar) &&(thirdBar > fourth)){
+      drawHLine(closeCandle);
+     
+    returnCode = MessageBox(closeCandle,"Indicator",MB_OK);
+      Alert(closeCandle);
+    
+   }
    
-//--- return value of prev_calculated for next call
-   return(rates_total);
+   
   }
+ void drawHLine(int highestCandle){
+
+   ObjectDelete("Line");
+   ObjectCreate("Line",OBJ_HLINE,0,Time[0],High[highestCandle]);
+   
+   
+   }
 //+------------------------------------------------------------------+
